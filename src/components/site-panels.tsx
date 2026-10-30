@@ -1155,19 +1155,19 @@ function VendorForm({ panel }: { panel: Panel }) {
 function EventsLogo() {
   const shadow = { textShadow: "0 2px 18px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.5)" };
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 flex h-[46%] items-center justify-center">
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 flex h-[62%] items-center sm:h-[46%] justify-center">
       <div
         className="absolute inset-0"
         style={{ background: "radial-gradient(ellipse 45% 70% at 50% 55%, rgba(12,10,8,0.38) 0%, rgba(12,10,8,0.14) 55%, transparent 80%)" }}
       />
       <div className="relative flex flex-col items-center text-[#f4ecdf]" style={shadow}>
-        <div className="flex items-center gap-3 text-[0.6rem] tracking-[0.28em] uppercase sm:text-xs">
+        <div className="flex items-center gap-2 text-[0.5rem] tracking-[0.24em] sm:gap-3 uppercase sm:text-xs">
           <span className="h-px w-8 bg-[#f4ecdf]/70 sm:w-14" />
           Serendipitous Ranch
           <span className="h-px w-8 bg-[#f4ecdf]/70 sm:w-14" />
         </div>
-        <div className="font-display mt-1 text-6xl leading-none sm:mt-2 sm:text-8xl lg:text-9xl">Events</div>
-        <div className="mt-2 flex items-center gap-3 text-[0.55rem] tracking-[0.3em] uppercase opacity-90 sm:mt-4 sm:text-[0.7rem]">
+        <div className="font-display mt-1 text-5xl leading-none sm:mt-2 sm:text-8xl lg:text-9xl">Events</div>
+        <div className="mt-1.5 flex items-center gap-2 text-[0.5rem] sm:gap-3 tracking-[0.3em] uppercase opacity-90 sm:mt-4 sm:text-[0.7rem]">
           <span className="h-px w-6 bg-[#f4ecdf]/50 sm:w-10" />
           <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="currentColor">
             <path d="M6 0 L7.2 4.8 L12 6 L7.2 7.2 L6 12 L4.8 7.2 L0 6 L4.8 4.8 Z" />
