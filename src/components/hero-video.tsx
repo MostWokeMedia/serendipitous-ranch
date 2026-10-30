@@ -99,6 +99,7 @@ export function HeroImage({
   alt,
   stats,
   overlay,
+  className,
 }: {
   src: string;
   webp?: string;
@@ -106,6 +107,8 @@ export function HeroImage({
   stats?: { stat: string; title: string; text?: string }[];
   /** Static layer over the photo (not in the parallax layer). */
   overlay?: React.ReactNode;
+  /** Extra classes on the outer wrapper (e.g. a narrower desktop width). */
+  className?: string;
 }) {
   const frame = (
     <HeroFrame>
@@ -121,7 +124,7 @@ export function HeroImage({
   if (!shown.length && !overlay) return frame;
   if (!shown.length) {
     return (
-      <div className="relative">
+      <div className={`relative ${className ?? ""}`}>
         {frame}
         {overlay}
       </div>
