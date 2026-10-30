@@ -29,7 +29,7 @@ export function HeroVideo() {
       raf = 0;
       const top = box.getBoundingClientRect().top;
       const shift = Math.max(0, -top) * 0.4;
-      el.style.transform = `translate3d(0, ${shift.toFixed(1)}px, 0) scale(1.1)`;
+      el.style.transform = `translate3d(0, ${shift.toFixed(1)}px, 0)`;
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -46,7 +46,7 @@ export function HeroVideo() {
 
   return (
     <div ref={frame} className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: "1672 / 941" }}>
-      <div ref={layer} className="absolute inset-0 will-change-transform" style={{ transform: still ? undefined : "scale(1.1)" }}>
+      <div ref={layer} className="absolute inset-0 will-change-transform">
         {still ? (
           <img src="/images/hero.jpg" alt={ALT} className="h-full w-full object-cover" width={1672} height={941} />
         ) : (
