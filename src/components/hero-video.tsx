@@ -102,7 +102,7 @@ export function HeroImage({
   src: string;
   webp?: string;
   alt: string;
-  stats?: { stat: string; title: string }[];
+  stats?: { stat: string; title: string; text?: string }[];
 }) {
   const frame = (
     <HeroFrame>
@@ -120,13 +120,16 @@ export function HeroImage({
     <div className="relative">
       {frame}
       {/* Stats sit over the photo on desktop (outside the parallax layer); under it on small screens. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-2/3 bg-gradient-to-t from-black/70 via-black/25 to-transparent md:block" />
+      <div
+        className="pointer-events-none absolute inset-0 hidden md:block"
+        style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.15) 100%)" }}
+      />
       <HeroStats items={shown} />
     </div>
   );
 }
 
-function HeroStats({ items }: { items: { stat: string; title: string }[] }) {
+function HeroStats({ items }: { items: { stat: string; title: string; text?: string }[] }) {
   const box = useRef<HTMLUListElement>(null);
   const [progress, setProgress] = useState(1);
 
@@ -159,16 +162,17 @@ function HeroStats({ items }: { items: { stat: string; title: string }[] }) {
   return (
     <ul
       ref={box}
-      className="grid grid-cols-2 gap-2 bg-black p-2 md:absolute md:inset-x-0 md:bottom-0 md:grid-cols-4 md:gap-4 md:bg-transparent md:px-8 md:pb-8 lg:px-12"
+      className="grid grid-cols-2 gap-2 bg-black p-2 md:absolute md:top-1/2 md:left-1/2 md:w-[min(900px,calc(100%-4rem))] md:-translate-x-1/2 md:-translate-y-1/2 md:gap-3 md:bg-transparent md:p-0"
     >
       {items.map((item) => (
         <li
           key={item.title}
-          className="border border-white/25 p-3 text-white backdrop-blur-md md:p-5"
+          className="border border-white/25 p-3 text-white backdrop-blur-md md:p-4 lg:p-5"
           style={{ background: "rgba(20,16,12,0.45)" }}
         >
-          <p className="font-display text-2xl tabular-nums md:text-4xl">{countTo(item.stat, progress)}</p>
+          <p className="font-display text-2xl tabular-nums md:text-3xl lg:text-4xl">{countTo(item.stat, progress)}</p>
           <p className="mt-1 text-sm md:text-base">{item.title}</p>
+          {item.text ? <p className="mt-2 hidden text-sm text-white/80 md:block">{item.text}</p> : null}
         </li>
       ))}
     </ul>
