@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FeedLink } from "@/components/feed-link";
 import { PanelEditor } from "@/components/panel-editor";
 import { SiteFrame } from "@/components/site-frame";
@@ -18,9 +18,10 @@ import {
 } from "@/lib/ranch/api";
 import { RECURRING, TIERS } from "@/lib/ranch/content";
 import { formatHold } from "@/lib/ranch/dates";
+import { deskRefresh, deskSignIn, deskSignOut } from "@/lib/ranch/desk-auth";
 
 export const Route = createFileRoute("/steward")({
-  loader: () => getDesk(),
+  loader: () => getDesk().catch(() => null),
   head: () => ({
     meta: [
       { title: "Ranch desk · Serendipitous Ranch" },
@@ -32,6 +33,54 @@ export const Route = createFileRoute("/steward")({
 
 function DeskPage() {
   const data = Route.useLoaderData();
+  return data ? <Desk data={data} /> : <DeskSignIn />;
+}
+
+function DeskSignIn() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    void deskRefresh().then((ok) => (ok ? router.invalidate() : undefined));
+  }, [router]);
+  return (
+    <SiteFrame>
+      <section className="wrap max-w-md py-12">
+        <p className="kicker">Ranch desk</p>
+        <h1 className="mt-3 text-5xl">Sign in</h1>
+        <form
+          className="mt-6 grid gap-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            setBusy(true);
+            setError("");
+            void deskSignIn(email.trim(), password)
+              .then(async (failed) => {
+                if (failed) return setError(failed);
+                await router.invalidate();
+              })
+              .finally(() => setBusy(false));
+          }}
+        >
+          <label>
+            <span className="label">Email</span>
+            <input className="control" type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </label>
+          <label>
+            <span className="label">Password</span>
+            <input className="control" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </label>
+          {error ? <p className="text-accent" role="alert">{error}</p> : null}
+          <button className="btn" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
+        </form>
+      </section>
+    </SiteFrame>
+  );
+}
+
+function Desk({ data }: { data: Awaited<ReturnType<typeof getDesk>> }) {
   const router = useRouter();
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -59,10 +108,20 @@ function DeskPage() {
         <p className="kicker">Ranch desk</p>
         <h1 className="mt-3 text-5xl">Quotes, rates, and the Airbnb feeds.</h1>
         <p className="mt-4 max-w-2xl text-muted">
-          This desk is not on the public menu and it is not behind a sign-in. Quotes and vendor applications
+          This desk is not on the public menu and needs a ranch desk sign-in. Quotes and vendor applications
           include names, emails, and phone numbers. Do not share the address. Airbnb export links are read once
           and not saved. Event prices below are internal. Nightly rates are what the public calendars show.
         </p>
+        <button
+          className="mt-4 text-sm underline"
+          type="button"
+          onClick={() => {
+            deskSignOut();
+            void router.invalidate();
+          }}
+        >
+          Sign out
+        </button>
         {notice ? <p className="mt-4 text-accent" role="status">{notice}</p> : null}
         {error ? <p className="mt-4 text-accent" role="alert">{error}</p> : null}
       </section>

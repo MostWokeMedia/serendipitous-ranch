@@ -307,6 +307,30 @@ const panelFieldsSchema = z.object({
   items: z.array(z.object({ stat: z.string().max(80), title: z.string().max(160), text: z.string().max(1200) })).max(24),
 });
 
+// Ranch desk guard: the caller must send a valid Supabase access token (cookie) for a user
+// whose app_metadata.role is "admin". Anything else gets a 401 and no data.
+async function requireAdmin(): Promise<void> {
+  const { getCookie, setResponseStatus } = await import("@tanstack/react-start/server");
+  const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, DESK_COOKIE } = await import("./desk-auth");
+  const token = getCookie(DESK_COOKIE);
+  let admin = false;
+  if (token) {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}` },
+      });
+      const user = res.ok ? await res.json() : null;
+      admin = user?.app_metadata?.role === "admin";
+    } catch {
+      admin = false;
+    }
+  }
+  if (!admin) {
+    setResponseStatus(401);
+    throw new Error("Unauthorized");
+  }
+}
+
 export const getInventory = createServerFn({ method: "GET" }).handler(async (): Promise<Inventory> => {
   const sql = await db();
   const [spaces, blocks, contactEmail, panels] = await Promise.all([
@@ -319,6 +343,7 @@ export const getInventory = createServerFn({ method: "GET" }).handler(async (): 
 });
 
 export const getDesk = createServerFn({ method: "GET" }).handler(async (): Promise<Desk> => {
+    await requireAdmin();
   const sql = await db();
   const spaces = await loadSpaces(sql, false);
   const blocks = await loadBlocks(sql);
@@ -511,6 +536,7 @@ async function writeBlocks(
 export const holdDates = createServerFn({ method: "POST" })
   .validator((input: unknown) => holdSchema.parse(input))
   .handler(async ({ data }): Promise<OkRef | Fail> => {
+    await requireAdmin();
     const sql = await db();
     const target = await targetIds(sql, data.mode, data.slug);
     if ("ok" in target) return target;
@@ -521,6 +547,7 @@ export const holdDates = createServerFn({ method: "POST" })
 export const addStay = createServerFn({ method: "POST" })
   .validator((input: unknown) => spaceSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: true; slug: string } | Fail> => {
+    await requireAdmin();
     const sql = await db();
     if (emailIn(data.name) || emailIn(data.summary)) {
       return { ok: false, error: "Leave email addresses out of the listing. This desk is not a private inbox." };
@@ -550,6 +577,7 @@ export const addStay = createServerFn({ method: "POST" })
 export const setStayActive = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ slug: z.string().min(1).max(60), active: z.boolean() }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const sql = await db();
     const rows = await sql<{ id: number }>`update spaces set active = ${data.active} where slug = ${data.slug} and kind = 'stay' returning id`;
     if (!rows.length) return { ok: false, error: "That stay is not listed." };
@@ -559,6 +587,7 @@ export const setStayActive = createServerFn({ method: "POST" })
 export const setContactEmail = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ email: z.string().trim().max(120) }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const email = data.email.trim();
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return { ok: false, error: "That does not look like an email address." };
@@ -572,6 +601,7 @@ export const setContactEmail = createServerFn({ method: "POST" })
 export const manualHold = createServerFn({ method: "POST" })
   .validator((input: unknown) => manualSchema.parse(input))
   .handler(async ({ data }): Promise<OkRef | Fail> => {
+    await requireAdmin();
     const sql = await db();
     const target = await targetIds(sql, data.mode === "whole" ? "whole" : "stay", data.slug);
     if ("ok" in target) return target;
@@ -581,6 +611,7 @@ export const manualHold = createServerFn({ method: "POST" })
 export const releaseHold = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ refCode: z.string().trim().max(12) }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true; removed: number } | Fail> => {
+    await requireAdmin();
     const code = data.refCode.trim().toUpperCase();
     if (!/^[A-Z]{2}-[A-Z0-9]{4}$/.test(code)) {
       return { ok: false, error: "Reference codes look like SR-7K2M." };
@@ -634,6 +665,7 @@ export const pullAirbnb = createServerFn({ method: "POST" })
     z.object({ slug: z.string().min(1).max(60), icalUrl: z.string().trim().max(500) }).parse(input),
   )
   .handler(async ({ data }): Promise<{ ok: true; count: number } | Fail> => {
+    await requireAdmin();
     let u: URL;
     try {
       u = new URL(data.icalUrl.trim());
@@ -688,6 +720,7 @@ export const pullAirbnb = createServerFn({ method: "POST" })
 export const dismissVendor = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ refCode: z.string().trim().max(12) }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const code = data.refCode.trim().toUpperCase();
     if (!/^VN-[A-Z0-9]{4}$/.test(code)) return { ok: false, error: "That is not a vendor reference." };
     const sql = await db();
@@ -844,6 +877,7 @@ export const submitInquiry = createServerFn({ method: "POST" })
 export const dismissInquiry = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ refCode: z.string().trim().max(12) }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const code = data.refCode.trim().toUpperCase();
     if (!/^QR-[A-Z0-9]{4}$/.test(code)) return { ok: false, error: "That is not a quote reference." };
     const sql = await db();
@@ -855,6 +889,7 @@ export const dismissInquiry = createServerFn({ method: "POST" })
 export const setStayRates = createServerFn({ method: "POST" })
   .validator((input: unknown) => rateSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const sql = await db();
     const rows = await sql<{ id: number }>`
       update spaces
@@ -877,6 +912,7 @@ export const setStayCopy = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const sql = await db();
     const rows = await sql<{ id: number }>`
       update spaces set name = ${data.name.trim()}, summary = ${data.summary.trim()}
@@ -890,6 +926,7 @@ export const setStayCopy = createServerFn({ method: "POST" })
 export const savePanelFields = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ id: z.string().min(1).max(60), fields: panelFieldsSchema }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const def = panelDef(data.id);
     if (!def) return { ok: false, error: "That panel is not on the site." };
     const fields: PanelFields = {
@@ -912,6 +949,7 @@ export const savePanelFields = createServerFn({ method: "POST" })
 export const movePanel = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ id: z.string().min(1).max(60), dir: z.union([z.literal(-1), z.literal(1)]) }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const sql = await db();
     const panels = await loadPanels(sql);
     const current = panels.find((panel) => panel.id === data.id);
@@ -930,6 +968,7 @@ export const movePanel = createServerFn({ method: "POST" })
 export const placePanel = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ id: z.string().min(1).max(60), page: z.string().min(1).max(20) }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     if (!isPageId(data.page)) return { ok: false, error: "That page is not on the site." };
     const page: PageId = data.page;
     const sql = await db();
@@ -946,6 +985,7 @@ export const placePanel = createServerFn({ method: "POST" })
 export const setPanelHidden = createServerFn({ method: "POST" })
   .validator((input: unknown) => z.object({ id: z.string().min(1).max(60), hidden: z.boolean() }).parse(input))
   .handler(async ({ data }): Promise<{ ok: true } | Fail> => {
+    await requireAdmin();
     const sql = await db();
     await loadPanels(sql);
     const rows = await sql<{ id: string }>`update page_panels set hidden = ${data.hidden} where id = ${data.id} returning id`;
