@@ -748,8 +748,8 @@ function StayQuote({ panel, inventory }: { panel: Panel; inventory: Inventory })
         ) : null}
         {code ? (
           <p className="mt-4 border border-accent p-4" role="status">
-            Quote <span className="font-display text-2xl">{code}</span> is on the ranch desk. We
-            will answer at the email you gave.
+            Thanks for reaching out! Your quote number is <span className="font-display text-2xl">{code}</span>.
+            We'll get back to you as soon as we can.
           </p>
         ) : null}
       </form>
