@@ -363,12 +363,15 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
       return <StayQuote panel={panel} inventory={inventory} />;
     case "events-intro":
       return (
-        <section className="wrap py-12">
-          {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
-          <h1 className="mt-3 max-w-3xl text-5xl">{fields.title}</h1>
-          <p className="mt-4 max-w-2xl whitespace-pre-wrap text-lg text-muted">{fields.body}</p>
-          {fields.note ? <p className="mt-4 text-sm text-muted">{fields.note}</p> : null}
-        </section>
+        <>
+          <HeroImage src="/images/events-hero.jpg" webp="/images/events-hero.webp" alt="Campfire at dusk by the covered pavilion and geodesic dome" />
+          <section className="wrap py-12">
+            {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
+            <h1 className="mt-3 max-w-3xl text-5xl">{fields.title}</h1>
+            <p className="mt-4 max-w-2xl whitespace-pre-wrap text-lg text-muted">{fields.body}</p>
+            {fields.note ? <p className="mt-4 text-sm text-muted">{fields.note}</p> : null}
+          </section>
+        </>
       );
     case "events-list":
       return (
