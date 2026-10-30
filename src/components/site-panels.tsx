@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { createContext, useContext, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { HeroVideo } from "@/components/hero-video";
 import { RangeCalendar } from "@/components/range-calendar";
 import { submitInquiry, submitVendor, type Inventory, type Space } from "@/lib/ranch/api";
 import { ADDRESS, MAPS, WORKS } from "@/lib/ranch/content";
@@ -61,15 +62,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
   const fields = panel.fields;
   switch (panel.id) {
     case "home-hero":
-      return (
-        <img
-          src="/images/hero.jpg"
-          alt="Serendipitous Ranch. A place to slow down and reconnect. Del Valle, Texas."
-          className="w-full"
-          width={1672}
-          height={941}
-        />
-      );
+      return <HeroVideo />;
     case "home-intro":
       return (
         <section className="wrap py-14">
