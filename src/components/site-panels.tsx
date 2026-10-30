@@ -207,6 +207,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             webp="/images/grounds-hero-aerial.webp"
             alt="Aerial view of the ranch grounds"
             stats={panelById(inventory.panels, "grounds-land").fields.items}
+            overlay={<EventsLogo word="Grounds" band="h-[54%] sm:h-[65%] md:h-[38%] xl:h-[48%]" />}
           />
           <section className="wrap py-12">
             {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
@@ -1152,10 +1153,10 @@ function VendorForm({ panel }: { panel: Panel }) {
 }
 
 /** Decorative "Events" wordmark for the events hero; sits in the open dusk sky above the fire. */
-function EventsLogo() {
+function EventsLogo({ word = "Events", band = "h-[62%] sm:h-[46%] md:h-full" }: { word?: string; band?: string }) {
   const shadow = { textShadow: "0 2px 18px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.5)" };
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 flex h-[62%] items-center sm:h-[46%] md:h-full justify-center">
+    <div aria-hidden className={`pointer-events-none absolute inset-x-0 top-0 flex ${band} items-center justify-center`}>
       <div
         className="absolute inset-0"
         style={{ background: "radial-gradient(ellipse 45% 70% at 50% 55%, rgba(12,10,8,0.38) 0%, rgba(12,10,8,0.14) 55%, transparent 80%)" }}
@@ -1166,7 +1167,7 @@ function EventsLogo() {
           Serendipitous Ranch
           <span className="h-px w-8 bg-[#f4ecdf]/70 sm:w-14 md:w-28 md:bg-[#d4b97f]" />
         </div>
-        <div className="font-display mt-1 text-5xl leading-none sm:mt-2 sm:text-8xl lg:text-9xl">Events</div>
+        <div className="font-display mt-1 text-5xl leading-none sm:mt-2 sm:text-8xl lg:text-9xl">{word}</div>
         <div className="mt-1.5 flex items-center gap-2 text-[0.5rem] sm:gap-3 tracking-[0.3em] uppercase opacity-90 sm:mt-4 sm:text-[0.7rem]">
           <span className="h-px w-6 bg-[#f4ecdf]/50 sm:w-10 md:w-20 md:bg-[#d4b97f]" />
           <svg viewBox="0 0 12 12" className="h-2.5 w-2.5 md:text-[#d4b97f]" fill="currentColor">

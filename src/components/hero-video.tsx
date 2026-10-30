@@ -186,7 +186,7 @@ function HeroStats({ items }: { items: { stat: string; title: string; text?: str
   return (
     <ul
       ref={box}
-      className="grid grid-cols-2 gap-2 bg-black p-2 md:absolute md:top-1/2 md:left-1/2 md:w-[min(900px,calc(100%-4rem))] md:-translate-x-1/2 md:-translate-y-1/2 md:gap-3 md:bg-transparent md:p-0"
+      className="grid grid-cols-2 gap-2 bg-black p-2 md:absolute md:bottom-[5%] md:left-1/2 md:w-[min(900px,calc(100%-4rem))] md:-translate-x-1/2 md:gap-3 md:bg-transparent md:p-0"
     >
       {items.map((item) => (
         <li
