@@ -98,11 +98,14 @@ export function HeroImage({
   webp,
   alt,
   stats,
+  overlay,
 }: {
   src: string;
   webp?: string;
   alt: string;
   stats?: { stat: string; title: string; text?: string }[];
+  /** Static layer over the photo (not in the parallax layer). */
+  overlay?: React.ReactNode;
 }) {
   const frame = (
     <HeroFrame>
@@ -115,10 +118,19 @@ export function HeroImage({
     </HeroFrame>
   );
   const shown = (stats ?? []).filter((item) => item.stat.trim() !== "");
-  if (!shown.length) return frame;
+  if (!shown.length && !overlay) return frame;
+  if (!shown.length) {
+    return (
+      <div className="relative">
+        {frame}
+        {overlay}
+      </div>
+    );
+  }
   return (
     <div className="relative">
       {frame}
+      {overlay}
       {/* Stats sit over the photo on desktop (outside the parallax layer); under it on small screens. */}
       <div
         className="pointer-events-none absolute inset-0 hidden md:block"
