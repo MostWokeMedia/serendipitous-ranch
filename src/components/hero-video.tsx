@@ -93,8 +93,18 @@ export function HeroVideo() {
 }
 
 /** Static photo hero in the same frame as the homepage video. */
-export function HeroImage({ src, webp, alt }: { src: string; webp?: string; alt: string }) {
-  return (
+export function HeroImage({
+  src,
+  webp,
+  alt,
+  stats,
+}: {
+  src: string;
+  webp?: string;
+  alt: string;
+  stats?: { stat: string; title: string }[];
+}) {
+  const frame = (
     <HeroFrame>
       {() => (
         <picture>
@@ -104,4 +114,76 @@ export function HeroImage({ src, webp, alt }: { src: string; webp?: string; alt:
       )}
     </HeroFrame>
   );
+  const shown = (stats ?? []).filter((item) => item.stat.trim() !== "");
+  if (!shown.length) return frame;
+  return (
+    <div className="relative">
+      {frame}
+      {/* Stats sit over the photo on desktop (outside the parallax layer); under it on small screens. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-2/3 bg-gradient-to-t from-black/70 via-black/25 to-transparent md:block" />
+      <HeroStats items={shown} />
+    </div>
+  );
+}
+
+function HeroStats({ items }: { items: { stat: string; title: string }[] }) {
+  const box = useRef<HTMLUListElement>(null);
+  const [progress, setProgress] = useState(1);
+
+  useEffect(() => {
+    const el = box.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    setProgress(0);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / 1500);
+          setProgress(1 - Math.pow(1 - t, 3));
+          if (t < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <ul
+      ref={box}
+      className="grid grid-cols-2 gap-2 bg-black p-2 md:absolute md:inset-x-0 md:bottom-0 md:grid-cols-4 md:gap-4 md:bg-transparent md:px-8 md:pb-8 lg:px-12"
+    >
+      {items.map((item) => (
+        <li
+          key={item.title}
+          className="border border-white/25 p-3 text-white backdrop-blur-md md:p-5"
+          style={{ background: "rgba(20,16,12,0.45)" }}
+        >
+          <p className="font-display text-2xl tabular-nums md:text-4xl">{countTo(item.stat, progress)}</p>
+          <p className="mt-1 text-sm md:text-base">{item.title}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Scale the first number in a stat ("63,000 gallons", "10+") by progress, keeping its formatting. */
+function countTo(stat: string, progress: number): string {
+  if (progress >= 1) return stat;
+  const match = stat.match(/\d[\d,]*(\.\d+)?/);
+  if (!match || match.index === undefined) return stat;
+  const raw = match[0];
+  const decimals = match[1] ? match[1].length - 1 : 0;
+  const target = Number(raw.replace(/,/g, ""));
+  const value = (target * progress).toFixed(decimals);
+  const text = raw.includes(",") ? Number(value).toLocaleString("en-US", { minimumFractionDigits: decimals }) : value;
+  return stat.slice(0, match.index) + text + stat.slice(match.index + raw.length);
 }

@@ -208,6 +208,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             src="/images/grounds-hero-aerial.jpg"
             webp="/images/grounds-hero-aerial.webp"
             alt="Aerial view of the ranch grounds"
+            stats={panelById(inventory.panels, "grounds-land").fields.items}
           />
           <section className="wrap py-12">
             {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
