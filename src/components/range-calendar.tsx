@@ -4,6 +4,7 @@ import {
   addDays,
   daysInMonth,
   isWeekendNight,
+  SHOW_PRICES,
   money,
   rangesOverlap,
   shiftMonth,
@@ -35,7 +36,7 @@ export function RangeCalendar({
   const earliest = addDays(utcToday(), -1);
   const weekPrice = weekdayRate;
   const weekendPrice = weekendRate;
-  const priced = weekPrice != null && weekendPrice != null;
+  const priced = SHOW_PRICES && weekPrice != null && weekendPrice != null;
   const cells: (string | null)[] = [
     ...Array.from({ length: lead }, () => null),
     ...Array.from({ length: count }, (_, i) => {

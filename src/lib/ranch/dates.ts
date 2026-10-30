@@ -1,3 +1,6 @@
+// Set to true to show nightly rates, totals and rate labels on the public site again.
+export const SHOW_PRICES = false;
+
 export const MONTHS = [
   "January",
   "February",

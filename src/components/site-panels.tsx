@@ -11,7 +11,7 @@ import { HeroImage, HeroVideo } from "@/components/hero-video";
 import { RangeCalendar } from "@/components/range-calendar";
 import { submitInquiry, submitVendor, type Inventory, type Space } from "@/lib/ranch/api";
 import { ADDRESS, MAPS, WORKS } from "@/lib/ranch/content";
-import { addDays, formatHold, money, stayTotal } from "@/lib/ranch/dates";
+import { addDays, formatHold, money, SHOW_PRICES, stayTotal } from "@/lib/ranch/dates";
 import { panelById, panelsOn, type PageId, type Panel, type PanelItem } from "@/lib/ranch/panels";
 
 const PHOTOS: Record<string, { src: string; alt: string }> = {
@@ -584,7 +584,7 @@ function CalendarCard({
       <h2 className="mt-4 text-3xl">{title}</h2>
       <p className="mt-1 text-sm text-accent">{meta}</p>
       <p className="mt-2 whitespace-pre-wrap text-sm text-muted">{summary}</p>
-      {weekday != null && weekend != null ? (
+      {!SHOW_PRICES ? null : weekday != null && weekend != null ? (
         <p className="mt-3 text-sm">
           <span className="tabular-nums">{money(weekday)}</span>
           <span className="text-muted"> Sun–Thu · </span>
@@ -622,7 +622,7 @@ function StayQuote({ panel, inventory }: { panel: Panel; inventory: Inventory })
       ? panelById(inventory.panels, "stay-calendars").fields.title
       : (chosen?.name ?? "Stay");
   const posted =
-    pick.start && pick.end && rates.weekday != null && rates.weekend != null
+    SHOW_PRICES && pick.start && pick.end && rates.weekday != null && rates.weekend != null
       ? stayTotal(pick.start, pick.end, rates.weekday, rates.weekend)
       : null;
   const [name, setName] = useState("");
