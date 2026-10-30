@@ -146,6 +146,12 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
     case "home-rooms":
       return (
         <section className="wrap pb-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 className="max-w-xl text-4xl">{fields.title}</h2>
+            <Link to="/grounds" className="btn-line">
+              Walk the grounds
+            </Link>
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
             {fields.items.map((item, index) => (
               <figure key={item.title} className="panel overflow-hidden">
@@ -160,12 +166,6 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
                 </figcaption>
               </figure>
             ))}
-          </div>
-          <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="max-w-xl text-4xl">{fields.title}</h2>
-            <Link to="/grounds" className="btn-line">
-              Walk the grounds
-            </Link>
           </div>
         </section>
       );
