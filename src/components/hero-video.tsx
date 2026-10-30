@@ -54,7 +54,7 @@ function HeroFrame({
   return (
     <div
       ref={frame}
-      className={`relative w-full overflow-hidden bg-black${trim ? " aspect-[1672/941] md:aspect-[1672/828]" : ""}`}
+      className={`relative w-full overflow-hidden bg-black${trim ? " aspect-[1672/941] md:aspect-[1672/913]" : ""}`}
       style={trim ? undefined : { aspectRatio: "1672 / 941" }}
     >
       <div ref={layer} className="absolute inset-0 will-change-transform">
@@ -73,13 +73,13 @@ export function HeroVideo() {
           <img
             src="/images/hero.jpg"
             alt={ALT}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover md:object-bottom"
             width={1672}
             height={941}
           />
         ) : (
           <video
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover md:object-bottom"
             autoPlay
             muted
             loop
