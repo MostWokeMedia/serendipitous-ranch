@@ -166,6 +166,17 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             <a href="#land" className="btn-line">Land</a>
             <a href="#services" className="btn-line">Services</a>
           </div>
+          <picture>
+            <source srcSet="/images/grounds-hero-aerial.webp" type="image/webp" />
+            <img
+              src="/images/grounds-hero-aerial.jpg"
+              alt="Aerial view of the ranch grounds"
+              width={2400}
+              height={1350}
+              fetchPriority="high"
+              className="mt-8 h-auto w-full"
+            />
+          </picture>
         </section>
       );
     case "grounds-buildings": {
