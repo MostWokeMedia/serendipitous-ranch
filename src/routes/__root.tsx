@@ -15,7 +15,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "A 41.5-acre ranch in Del Valle, Texas. Three stays, or the whole property. Five minutes from Circuit of the Americas.",
+          "A 41.5-acre ranch in Del Valle, Texas. The ranch house, the geodesic temple, or the whole property. Five minutes from Circuit of the Americas.",
       },
       { name: "theme-color", content: "#1c1712" },
     ],

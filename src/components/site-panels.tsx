@@ -7,24 +7,18 @@ import { ADDRESS, MAPS, WORKS } from "@/lib/ranch/content";
 import { addDays, formatHold, money, stayTotal } from "@/lib/ranch/dates";
 import { panelById, panelsOn, type PageId, type Panel, type PanelItem } from "@/lib/ranch/panels";
 
-const SLEEP = [
-  { src: "/images/guest-house.jpg", alt: "Cream guest house with a dark porch and teal door at sunset" },
-  { src: "/images/ranch-house.jpg", alt: "Stone ranch house with a metal roof, garden, and round fire pit" },
-  { src: "/images/geodesic.jpg", alt: "Geodesic temple with a blue metal roof, wooden doors, and a timber porch" },
-];
+const PHOTOS: Record<string, { src: string; alt: string }> = {
+  "Guest House": { src: "/images/guest-house.jpg", alt: "Cream guest house with a dark porch and teal door at sunset" },
+  "Ranch House": { src: "/images/ranch-house.jpg", alt: "Stone ranch house with a metal roof, garden, and round fire pit" },
+  "Geodesic Temple": { src: "/images/geodesic.jpg", alt: "Geodesic temple with a blue metal roof, wooden doors, and a timber porch" },
+  "Covered Pavilion": { src: "/images/pavilion.jpg", alt: "Covered pavilion with a long table and a timber stage under a metal roof" },
+  "Adobe Temple": { src: "/images/adobe.jpg", alt: "Hexagonal adobe temple with a blue tile roof, columns, and a cactus garden" },
+};
 
-const ROOM = [
-  { src: "/images/pavilion.jpg", alt: "Covered pavilion with a long table and a timber stage under a metal roof" },
-  { src: "/images/adobe.jpg", alt: "Hexagonal adobe temple with a blue tile roof, columns, and a cactus garden" },
-];
-
-const BUILDING = [
-  { src: "/images/pavilion.jpg", alt: "Covered pavilion with a long table and a timber stage under a metal roof" },
-  { src: "/images/adobe.jpg", alt: "Hexagonal adobe temple with a blue tile roof, columns, and a cactus garden" },
-  { src: "/images/geodesic.jpg", alt: "Geodesic temple with a blue metal roof, wooden doors, and a timber porch" },
-  { src: "/images/guest-house.jpg", alt: "Cream guest house with a dark porch and teal door at sunset" },
-  { src: "/images/ranch-house.jpg", alt: "Stone ranch house with a metal roof, garden, and round fire pit" },
-];
+/** Photo for a panel card, matched by the card's title so removing or reordering cards never shifts photos. */
+function photoFor(title: string): { src: string; alt: string } | undefined {
+  return PHOTOS[title.trim()];
+}
 
 type Pick = { slug: string; start: string | null; end: string | null };
 
@@ -38,12 +32,12 @@ function StayPickProvider({ firstSlug, children }: { firstSlug: string; children
 
 function useStayPick(): { pick: Pick; setPick: (pick: Pick) => void } {
   const value = useContext(StayPickContext);
-  if (!value) return { pick: { slug: "guest-house", start: null, end: null }, setPick: () => undefined };
+  if (!value) return { pick: { slug: "ranch-house", start: null, end: null }, setPick: () => undefined };
   return value;
 }
 
 export function PageStack({ page, inventory }: { page: PageId; inventory: Inventory }) {
-  const first = inventory.spaces.find((space) => space.kind === "stay")?.slug ?? "guest-house";
+  const first = inventory.spaces.find((space) => space.kind === "stay")?.slug ?? "ranch-house";
   const ordered = panelsOn(inventory.panels, page);
   return (
     <StayPickProvider firstSlug={first}>
@@ -99,7 +93,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {fields.items.map((item, index) => (
               <Link key={item.title} to="/stay" className="panel block overflow-hidden">
-                <img src={SLEEP[index]?.src} alt={SLEEP[index]?.alt ?? ""} className="aspect-3/2 w-full object-cover" />
+                <img src={photoFor(item.title)?.src} alt={photoFor(item.title)?.alt ?? ""} className="aspect-3/2 w-full object-cover" />
                 <div className="p-5">
                   <p className="text-sm text-accent">{item.stat}</p>
                   <h3 className="mt-1 text-3xl">{item.title}</h3>
@@ -117,7 +111,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           <div className="grid gap-4 md:grid-cols-2">
             {fields.items.map((item, index) => (
               <figure key={item.title} className="panel overflow-hidden">
-                <img src={ROOM[index]?.src} alt={ROOM[index]?.alt ?? ""} className="aspect-3/2 w-full object-cover" />
+                <img src={photoFor(item.title)?.src} alt={photoFor(item.title)?.alt ?? ""} className="aspect-3/2 w-full object-cover" />
                 <figcaption className="p-5">
                   <p className="text-sm text-accent">{item.stat}</p>
                   <h3 className="mt-1 text-3xl">{item.title}</h3>
@@ -175,13 +169,13 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
         </section>
       );
     case "grounds-buildings": {
-      const houses = fields.items.slice(-2);
-      const features = fields.items.slice(0, -2);
+      const houses = fields.items.filter((item) => /\bhouse\b/i.test(item.title));
+      const features = fields.items.filter((item) => !/\bhouse\b/i.test(item.title));
       return (
         <section id="buildings" className="wrap scroll-mt-24 pb-8">
           <div className="grid gap-4">
             {features.map((item, index) => {
-              const photo = BUILDING[index];
+              const photo = photoFor(item.title);
               return (
                 <article key={item.title} className={`panel grid gap-0 overflow-hidden ${photo ? "md:grid-cols-2" : ""}`}>
                   {photo ? (
@@ -198,7 +192,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           </div>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {houses.map((item, index) => {
-              const photo = BUILDING[features.length + index];
+              const photo = photoFor(item.title);
               return (
                 <article key={item.title} className="panel overflow-hidden">
                   {photo ? <img src={photo.src} alt={photo.alt} className="aspect-3/2 w-full object-cover" /> : null}

@@ -55,7 +55,7 @@ export const SERVICES = [
 export const GATHERINGS = [
   {
     name: "Micro wedding",
-    copy: "Ceremony on the grass or under the pavilion roof. Portraits at the pond and the adobe. Dinner at the stage. The houses if the wedding party should sleep here.",
+    copy: "Ceremony on the grass or under the pavilion roof. Portraits at the pond and the adobe. Dinner at the stage. The ranch house if the wedding party should sleep here.",
   },
   {
     name: "Corporate offsite",
@@ -63,14 +63,14 @@ export const GATHERINGS = [
   },
   {
     name: "Retreat",
-    copy: "Sessions in the zome, meals at the pavilion, tents on the twelve acres, beds in the guest house. Multi-day is the same land, held longer.",
+    copy: "Sessions in the zome, meals at the pavilion, tents on the twelve acres, beds in the ranch house. Multi-day is the same land, held longer.",
   },
 ];
 
 export const EVENTS = [
   {
     name: "Weddings",
-    copy: "Ceremony, portraits, and dinner on land you are not sharing with another party. The houses if you want the night to stay here.",
+    copy: "Ceremony, portraits, and dinner on land you are not sharing with another party. The ranch house if you want the night to stay here.",
   },
   {
     name: "Corporate",
