@@ -228,8 +228,10 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
         </>
       );
     case "grounds-buildings": {
-      const houses = fields.items.filter((item) => /\bhouse\b/i.test(item.title));
-      const features = fields.items.filter((item) => !/\bhouse\b/i.test(item.title));
+      const paired = fields.items.filter((item) => /\bhouse\b/i.test(item.title));
+      // The house pair only renders side by side when both are visible; a lone house joins the zigzag.
+      const houses = paired.length > 1 ? paired : [];
+      const features = paired.length > 1 ? fields.items.filter((item) => !paired.includes(item)) : fields.items;
       return (
         <section id="buildings" className="wrap scroll-mt-24 pb-8">
           <div className="grid gap-4">
