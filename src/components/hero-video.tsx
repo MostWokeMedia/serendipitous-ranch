@@ -142,12 +142,12 @@ export function HeroImage({
   return (
     <div className="relative">
       {frame}
-      {overlay}
       {/* Stats sit over the photo on desktop (outside the parallax layer); under it on small screens. */}
       <div
         className="pointer-events-none absolute inset-0 hidden md:block"
         style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.15) 100%)" }}
       />
+      {overlay}
       <HeroStats items={shown} />
     </div>
   );
