@@ -1,9 +1,10 @@
+import type React from "react";
 import { useEffect, useRef, useState } from "react";
 
 const ALT = "Serendipitous Ranch. A place to slow down and reconnect. Del Valle, Texas.";
 
-/** Homepage hero: looping drone video with logo/text baked in, plus a subtle scroll parallax. */
-export function HeroVideo() {
+/** Shared full-bleed hero frame: edge-to-edge, overflow hidden, 0.4x scroll parallax; static under reduced motion. */
+function HeroFrame({ children }: { children: (still: boolean) => React.ReactNode }) {
   const frame = useRef<HTMLDivElement>(null);
   const layer = useRef<HTMLDivElement>(null);
   const [still, setStill] = useState(false);
@@ -45,10 +46,31 @@ export function HeroVideo() {
   }, [still]);
 
   return (
-    <div ref={frame} className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: "1672 / 941" }}>
+    <div
+      ref={frame}
+      className="relative w-full overflow-hidden bg-black"
+      style={{ aspectRatio: "1672 / 941" }}
+    >
       <div ref={layer} className="absolute inset-0 will-change-transform">
-        {still ? (
-          <img src="/images/hero.jpg" alt={ALT} className="h-full w-full object-cover" width={1672} height={941} />
+        {children(still)}
+      </div>
+    </div>
+  );
+}
+
+/** Homepage hero: looping drone video with logo/text baked in. */
+export function HeroVideo() {
+  return (
+    <HeroFrame>
+      {(still) =>
+        still ? (
+          <img
+            src="/images/hero.jpg"
+            alt={ALT}
+            className="h-full w-full object-cover"
+            width={1672}
+            height={941}
+          />
         ) : (
           <video
             className="h-full w-full object-cover"
@@ -64,8 +86,22 @@ export function HeroVideo() {
             <source src="/videos/hero.mp4" type="video/mp4" />
             <img src="/images/hero.jpg" alt={ALT} width={1672} height={941} />
           </video>
-        )}
-      </div>
-    </div>
+        )
+      }
+    </HeroFrame>
+  );
+}
+
+/** Static photo hero in the same frame as the homepage video. */
+export function HeroImage({ src, webp, alt }: { src: string; webp?: string; alt: string }) {
+  return (
+    <HeroFrame>
+      {() => (
+        <picture>
+          {webp ? <source srcSet={webp} type="image/webp" /> : null}
+          <img src={src} alt={alt} className="h-full w-full object-cover" fetchPriority="high" />
+        </picture>
+      )}
+    </HeroFrame>
   );
 }

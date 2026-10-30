@@ -1,6 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { createContext, useContext, useMemo, useState, type FormEvent, type ReactNode } from "react";
-import { HeroVideo } from "@/components/hero-video";
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
+import { HeroImage, HeroVideo } from "@/components/hero-video";
 import { RangeCalendar } from "@/components/range-calendar";
 import { submitInquiry, submitVendor, type Inventory, type Space } from "@/lib/ranch/api";
 import { ADDRESS, MAPS, WORKS } from "@/lib/ranch/content";
@@ -8,11 +15,26 @@ import { addDays, formatHold, money, stayTotal } from "@/lib/ranch/dates";
 import { panelById, panelsOn, type PageId, type Panel, type PanelItem } from "@/lib/ranch/panels";
 
 const PHOTOS: Record<string, { src: string; alt: string }> = {
-  "Guest House": { src: "/images/guest-house.jpg", alt: "Cream guest house with a dark porch and teal door at sunset" },
-  "Ranch House": { src: "/images/ranch-house.jpg", alt: "Stone ranch house with a metal roof, garden, and round fire pit" },
-  "Geodesic Temple": { src: "/images/geodesic.jpg", alt: "Geodesic temple with a blue metal roof, wooden doors, and a timber porch" },
-  "Covered Pavilion": { src: "/images/pavilion.jpg", alt: "Covered pavilion with a long table and a timber stage under a metal roof" },
-  "Adobe Temple": { src: "/images/adobe.jpg", alt: "Hexagonal adobe temple with a blue tile roof, columns, and a cactus garden" },
+  "Guest House": {
+    src: "/images/guest-house.jpg",
+    alt: "Cream guest house with a dark porch and teal door at sunset",
+  },
+  "Ranch House": {
+    src: "/images/ranch-house.jpg",
+    alt: "Stone ranch house with a metal roof, garden, and round fire pit",
+  },
+  "Geodesic Temple": {
+    src: "/images/geodesic.jpg",
+    alt: "Geodesic temple with a blue metal roof, wooden doors, and a timber porch",
+  },
+  "Covered Pavilion": {
+    src: "/images/pavilion.jpg",
+    alt: "Covered pavilion with a long table and a timber stage under a metal roof",
+  },
+  "Adobe Temple": {
+    src: "/images/adobe.jpg",
+    alt: "Hexagonal adobe temple with a blue tile roof, columns, and a cactus garden",
+  },
 };
 
 /** Photo for a panel card, matched by the card's title so removing or reordering cards never shifts photos. */
@@ -32,7 +54,8 @@ function StayPickProvider({ firstSlug, children }: { firstSlug: string; children
 
 function useStayPick(): { pick: Pick; setPick: (pick: Pick) => void } {
   const value = useContext(StayPickContext);
-  if (!value) return { pick: { slug: "ranch-house", start: null, end: null }, setPick: () => undefined };
+  if (!value)
+    return { pick: { slug: "ranch-house", start: null, end: null }, setPick: () => undefined };
   return value;
 }
 
@@ -49,7 +72,10 @@ export function PageStack({ page, inventory }: { page: PageId; inventory: Invent
 }
 
 export function driveItems(inventory: Inventory): { value: string; label: string }[] {
-  return panelById(inventory.panels, "home-drives").fields.items.map((item) => ({ value: item.stat, label: item.title }));
+  return panelById(inventory.panels, "home-drives").fields.items.map((item) => ({
+    value: item.stat,
+    label: item.title,
+  }));
 }
 
 function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory }) {
@@ -64,8 +90,12 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           <h1 className="mt-4 max-w-4xl text-5xl text-fg sm:text-7xl">{fields.title}</h1>
           <p className="mt-5 max-w-2xl text-lg whitespace-pre-wrap text-fg">{fields.body}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/stay" className="btn">See the calendars</Link>
-            <Link to="/corporate" className="btn-line">Request a quote</Link>
+            <Link to="/stay" className="btn">
+              See the calendars
+            </Link>
+            <Link to="/corporate" className="btn-line">
+              Request a quote
+            </Link>
           </div>
         </section>
       );
@@ -81,7 +111,9 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             ))}
           </div>
           <p className="wrap mt-4 text-sm text-muted">
-            <a href={MAPS} className="underline decoration-border underline-offset-4">{ADDRESS}</a>
+            <a href={MAPS} className="underline decoration-border underline-offset-4">
+              {ADDRESS}
+            </a>
           </p>
         </section>
       );
@@ -93,7 +125,11 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {fields.items.map((item, index) => (
               <Link key={item.title} to="/stay" className="panel block overflow-hidden">
-                <img src={photoFor(item.title)?.src} alt={photoFor(item.title)?.alt ?? ""} className="aspect-3/2 w-full object-cover" />
+                <img
+                  src={photoFor(item.title)?.src}
+                  alt={photoFor(item.title)?.alt ?? ""}
+                  className="aspect-3/2 w-full object-cover"
+                />
                 <div className="p-5">
                   <p className="text-sm text-accent">{item.stat}</p>
                   <h3 className="mt-1 text-3xl">{item.title}</h3>
@@ -102,7 +138,9 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
               </Link>
             ))}
           </div>
-          {fields.note ? <p className="mt-6 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p> : null}
+          {fields.note ? (
+            <p className="mt-6 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p>
+          ) : null}
         </section>
       );
     case "home-rooms":
@@ -111,7 +149,11 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           <div className="grid gap-4 md:grid-cols-2">
             {fields.items.map((item, index) => (
               <figure key={item.title} className="panel overflow-hidden">
-                <img src={photoFor(item.title)?.src} alt={photoFor(item.title)?.alt ?? ""} className="aspect-3/2 w-full object-cover" />
+                <img
+                  src={photoFor(item.title)?.src}
+                  alt={photoFor(item.title)?.alt ?? ""}
+                  className="aspect-3/2 w-full object-cover"
+                />
                 <figcaption className="p-5">
                   <p className="text-sm text-accent">{item.stat}</p>
                   <h3 className="mt-1 text-3xl">{item.title}</h3>
@@ -121,7 +163,9 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           </div>
           <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
             <h2 className="max-w-xl text-4xl">{fields.title}</h2>
-            <Link to="/grounds" className="btn-line">Walk the grounds</Link>
+            <Link to="/grounds" className="btn-line">
+              Walk the grounds
+            </Link>
           </div>
         </section>
       );
@@ -152,32 +196,36 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
           <h2 className="mt-3 max-w-2xl text-4xl">{fields.title}</h2>
           <CardGrid items={fields.items} panel />
-          <Link to="/corporate" className="btn mt-8">Request a quote</Link>
+          <Link to="/corporate" className="btn mt-8">
+            Request a quote
+          </Link>
         </section>
       );
     case "grounds-intro":
       return (
-        <section className="wrap py-12">
-          {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
-          <h1 className="mt-3 max-w-3xl text-5xl">{fields.title}</h1>
-          <p className="mt-4 max-w-2xl whitespace-pre-wrap text-muted">{fields.body}</p>
-          <div className="mt-6 flex flex-wrap gap-3 text-sm">
-            <a href="#buildings" className="btn-line">Buildings</a>
-            <a href="#land" className="btn-line">Land</a>
-            <a href="#services" className="btn-line">Services</a>
-          </div>
-          <picture>
-            <source srcSet="/images/grounds-hero-aerial.webp" type="image/webp" />
-            <img
-              src="/images/grounds-hero-aerial.jpg"
-              alt="Aerial view of the ranch grounds"
-              width={2400}
-              height={1350}
-              fetchPriority="high"
-              className="mt-8 h-auto w-full"
-            />
-          </picture>
-        </section>
+        <>
+          <HeroImage
+            src="/images/grounds-hero-aerial.jpg"
+            webp="/images/grounds-hero-aerial.webp"
+            alt="Aerial view of the ranch grounds"
+          />
+          <section className="wrap py-12">
+            {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
+            <h1 className="mt-3 max-w-3xl text-5xl">{fields.title}</h1>
+            <p className="mt-4 max-w-2xl whitespace-pre-wrap text-muted">{fields.body}</p>
+            <div className="mt-6 flex flex-wrap gap-3 text-sm">
+              <a href="#buildings" className="btn-line">
+                Buildings
+              </a>
+              <a href="#land" className="btn-line">
+                Land
+              </a>
+              <a href="#services" className="btn-line">
+                Services
+              </a>
+            </div>
+          </section>
+        </>
       );
     case "grounds-buildings": {
       const houses = fields.items.filter((item) => /\bhouse\b/i.test(item.title));
@@ -188,9 +236,16 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             {features.map((item, index) => {
               const photo = photoFor(item.title);
               return (
-                <article key={item.title} className={`panel grid gap-0 overflow-hidden ${photo ? "md:grid-cols-2" : ""}`}>
+                <article
+                  key={item.title}
+                  className={`panel grid gap-0 overflow-hidden ${photo ? "md:grid-cols-2" : ""}`}
+                >
                   {photo ? (
-                    <img src={photo.src} alt={photo.alt} className={`h-full min-h-64 w-full object-cover ${index % 2 ? "md:order-2" : ""}`} />
+                    <img
+                      src={photo.src}
+                      alt={photo.alt}
+                      className={`h-full min-h-64 w-full object-cover ${index % 2 ? "md:order-2" : ""}`}
+                    />
                   ) : null}
                   <div className="flex flex-col justify-center p-6 sm:p-8">
                     <p className="text-sm text-accent">{item.stat}</p>
@@ -206,7 +261,13 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
               const photo = photoFor(item.title);
               return (
                 <article key={item.title} className="panel overflow-hidden">
-                  {photo ? <img src={photo.src} alt={photo.alt} className="aspect-3/2 w-full object-cover" /> : null}
+                  {photo ? (
+                    <img
+                      src={photo.src}
+                      alt={photo.alt}
+                      className="aspect-3/2 w-full object-cover"
+                    />
+                  ) : null}
                   <div className="p-6">
                     <p className="text-sm text-accent">{item.stat}</p>
                     <h2 className="mt-2 text-3xl">{item.title}</h2>
@@ -225,8 +286,16 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
           <h2 className="mt-3 text-4xl">{fields.title}</h2>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
-            <img src="/images/whole.jpg" alt="Aerial of the ranch: houses, woods, and open fields" className="aspect-3/2 w-full object-cover" />
-            <img src="/images/geodesic.jpg" alt="Geodesic temple with a blue metal roof, wooden doors, and a timber porch" className="aspect-3/2 w-full object-cover" />
+            <img
+              src="/images/whole.jpg"
+              alt="Aerial of the ranch: houses, woods, and open fields"
+              className="aspect-3/2 w-full object-cover"
+            />
+            <img
+              src="/images/geodesic.jpg"
+              alt="Geodesic temple with a blue metal roof, wooden doors, and a timber porch"
+              className="aspect-3/2 w-full object-cover"
+            />
           </div>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2">
             {fields.items.map((item) => (
@@ -237,7 +306,9 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
               </li>
             ))}
           </ul>
-          {fields.note ? <p className="mt-6 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p> : null}
+          {fields.note ? (
+            <p className="mt-6 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p>
+          ) : null}
         </section>
       );
     case "grounds-events":
@@ -247,8 +318,12 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
             <h2 className="mt-3 text-4xl">{fields.title}</h2>
             <CardGrid items={fields.items} />
-            {fields.note ? <p className="mt-6 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p> : null}
-            <Link to="/corporate" className="btn mt-8">Request a quote</Link>
+            {fields.note ? (
+              <p className="mt-6 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p>
+            ) : null}
+            <Link to="/corporate" className="btn mt-8">
+              Request a quote
+            </Link>
           </div>
         </section>
       );
@@ -301,13 +376,22 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           <h2 className="text-4xl">{fields.title}</h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {fields.items.map((item, index) => (
-              <li key={`${item.title}${index}`} className={index === fields.items.length - 1 ? "border border-accent p-5" : "border border-border p-5"}>
+              <li
+                key={`${item.title}${index}`}
+                className={
+                  index === fields.items.length - 1
+                    ? "border border-accent p-5"
+                    : "border border-border p-5"
+                }
+              >
                 <h3 className="text-2xl">{item.title}</h3>
                 <p className="mt-2 whitespace-pre-wrap text-sm text-muted">{item.text}</p>
               </li>
             ))}
           </ul>
-          {fields.note ? <p className="mt-6 max-w-3xl text-sm whitespace-pre-wrap text-muted">{fields.note}</p> : null}
+          {fields.note ? (
+            <p className="mt-6 max-w-3xl text-sm whitespace-pre-wrap text-muted">{fields.note}</p>
+          ) : null}
         </section>
       );
     case "events-quote":
@@ -390,7 +474,10 @@ function CardGrid({ items, panel = false }: { items: PanelItem[]; panel?: boolea
   return (
     <div className="mt-8 grid gap-4 md:grid-cols-3">
       {items.map((item) => (
-        <article key={item.title} className={panel ? "panel p-5" : "border border-border bg-bg p-5"}>
+        <article
+          key={item.title}
+          className={panel ? "panel p-5" : "border border-border bg-bg p-5"}
+        >
           <h3 className={panel ? "text-2xl" : "text-3xl"}>{item.title}</h3>
           <p className="mt-3 whitespace-pre-wrap text-muted">{item.text}</p>
         </article>
@@ -409,7 +496,14 @@ function combined(stays: Space[]): { weekday: number | null; weekend: number | n
 }
 
 function stayMeta(stay: Space): string {
-  return [stay.sqft ? `${stay.sqft.toLocaleString()} sq ft` : null, stay.sleeps ? `sleeps ${stay.sleeps}` : null].filter(Boolean).join(" · ") || "Stay";
+  return (
+    [
+      stay.sqft ? `${stay.sqft.toLocaleString()} sq ft` : null,
+      stay.sleeps ? `sleeps ${stay.sleeps}` : null,
+    ]
+      .filter(Boolean)
+      .join(" · ") || "Stay"
+  );
 }
 
 function StayCalendars({ panel, inventory }: { panel: Panel; inventory: Inventory }) {
@@ -440,7 +534,9 @@ function StayCalendars({ panel, inventory }: { panel: Panel; inventory: Inventor
         summary={panel.fields.body}
         weekday={whole.weekday}
         weekend={whole.weekend}
-        blocks={inventory.blocks.filter((block) => inventory.spaces.some((space) => space.inBuyout && space.slug === block.slug))}
+        blocks={inventory.blocks.filter((block) =>
+          inventory.spaces.some((space) => space.inBuyout && space.slug === block.slug),
+        )}
         start={pick.slug === "whole" ? pick.start : null}
         end={pick.slug === "whole" ? pick.end : null}
         onChange={(start, end) => setPick({ slug: "whole", start, end })}
@@ -489,7 +585,14 @@ function CalendarCard({
         <p className="mt-3 text-sm text-muted">It comes with the land. No separate nightly rate.</p>
       )}
       <div className="mt-4">
-        <RangeCalendar blocks={blocks} start={start} end={end} weekdayRate={weekday} weekendRate={weekend} onChange={onChange} />
+        <RangeCalendar
+          blocks={blocks}
+          start={start}
+          end={end}
+          weekdayRate={weekday}
+          weekendRate={weekend}
+          onChange={onChange}
+        />
       </div>
     </article>
   );
@@ -500,9 +603,18 @@ function StayQuote({ panel, inventory }: { panel: Panel; inventory: Inventory })
   const stays = inventory.spaces.filter((space) => space.kind === "stay");
   const whole = combined(stays);
   const chosen = pick.slug === "whole" ? null : stays.find((stay) => stay.slug === pick.slug);
-  const rates = pick.slug === "whole" ? whole : { weekday: chosen?.weekdayRate ?? null, weekend: chosen?.weekendRate ?? null };
-  const subject = pick.slug === "whole" ? panelById(inventory.panels, "stay-calendars").fields.title : (chosen?.name ?? "Stay");
-  const posted = pick.start && pick.end && rates.weekday != null && rates.weekend != null ? stayTotal(pick.start, pick.end, rates.weekday, rates.weekend) : null;
+  const rates =
+    pick.slug === "whole"
+      ? whole
+      : { weekday: chosen?.weekdayRate ?? null, weekend: chosen?.weekendRate ?? null };
+  const subject =
+    pick.slug === "whole"
+      ? panelById(inventory.panels, "stay-calendars").fields.title
+      : (chosen?.name ?? "Stay");
+  const posted =
+    pick.start && pick.end && rates.weekday != null && rates.weekend != null
+      ? stayTotal(pick.start, pick.end, rates.weekday, rates.weekend)
+      : null;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -522,7 +634,17 @@ function StayQuote({ panel, inventory }: { panel: Panel; inventory: Inventory })
     setError("");
     try {
       const result = await submitInquiry({
-        data: { kind: "stay", contactName: name, email, phone, subject, start: pick.start, end: pick.end, partySize: party, note },
+        data: {
+          kind: "stay",
+          contactName: name,
+          email,
+          phone,
+          subject,
+          start: pick.start,
+          end: pick.end,
+          partySize: party,
+          note,
+        },
       });
       if (!result.ok) {
         setError(result.error);
@@ -552,30 +674,72 @@ function StayQuote({ panel, inventory }: { panel: Panel; inventory: Inventory })
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <label>
             <span className="label">Full name</span>
-            <input className="control" required minLength={2} maxLength={80} value={name} onChange={(event) => setName(event.target.value)} />
+            <input
+              className="control"
+              required
+              minLength={2}
+              maxLength={80}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
           </label>
           <label>
             <span className="label">Email</span>
-            <input className="control" type="email" required maxLength={120} value={email} onChange={(event) => setEmail(event.target.value)} />
+            <input
+              className="control"
+              type="email"
+              required
+              maxLength={120}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
           </label>
           <label>
             <span className="label">Phone</span>
-            <input className="control" type="tel" required minLength={7} maxLength={30} value={phone} onChange={(event) => setPhone(event.target.value)} />
+            <input
+              className="control"
+              type="tel"
+              required
+              minLength={7}
+              maxLength={30}
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+            />
           </label>
           <label>
             <span className="label">People</span>
-            <input className="control" type="number" min={1} max={500} value={party} onChange={(event) => setParty(Number(event.target.value))} />
+            <input
+              className="control"
+              type="number"
+              min={1}
+              max={500}
+              value={party}
+              onChange={(event) => setParty(Number(event.target.value))}
+            />
           </label>
         </div>
         <label className="mt-4 block">
           <span className="label">Note</span>
-          <textarea className="control" maxLength={600} value={note} onChange={(event) => setNote(event.target.value)} placeholder="A race weekend, a wedding party, a quiet few nights. Whatever we should know." />
+          <textarea
+            className="control"
+            maxLength={600}
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            placeholder="A race weekend, a wedding party, a quiet few nights. Whatever we should know."
+          />
         </label>
-        <button className="btn mt-6" type="submit" disabled={busy}>{busy ? "Sending…" : "Request a quote"}</button>
-        {error ? <p className="mt-4 text-accent" role="alert">{error}</p> : null}
+        <button className="btn mt-6" type="submit" disabled={busy}>
+          {busy ? "Sending…" : "Request a quote"}
+        </button>
+        {error ? (
+          <p className="mt-4 text-accent" role="alert">
+            {error}
+          </p>
+        ) : null}
         {code ? (
           <p className="mt-4 border border-accent p-4" role="status">
-            Quote <span className="font-display text-2xl">{code}</span> is on the ranch desk. We will answer at the email you gave.
+            Quote <span className="font-display text-2xl">{code}</span> is on the ranch desk. We
+            will answer at the email you gave.
           </p>
         ) : null}
       </form>
@@ -584,7 +748,9 @@ function StayQuote({ panel, inventory }: { panel: Panel; inventory: Inventory })
 }
 
 function EventQuote({ panel, inventory }: { panel: Panel; inventory: Inventory }) {
-  const kinds = panelById(inventory.panels, "events-list").fields.items.map((item) => item.title).filter(Boolean);
+  const kinds = panelById(inventory.panels, "events-list")
+    .fields.items.map((item) => item.title)
+    .filter(Boolean);
   const [kind, setKind] = useState(kinds[1] || kinds[0] || "Corporate");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -606,7 +772,17 @@ function EventQuote({ panel, inventory }: { panel: Panel; inventory: Inventory }
       let rangeEnd: string | null = end || null;
       if (rangeStart && rangeEnd && rangeStart === rangeEnd) rangeEnd = addDays(rangeStart, 1);
       const result = await submitInquiry({
-        data: { kind: "event", contactName: name, email, phone, subject: kind, start: rangeStart, end: rangeEnd, partySize: party, note },
+        data: {
+          kind: "event",
+          contactName: name,
+          email,
+          phone,
+          subject: kind,
+          start: rangeStart,
+          end: rangeEnd,
+          partySize: party,
+          note,
+        },
       });
       if (!result.ok) {
         setError(result.error);
@@ -633,7 +809,11 @@ function EventQuote({ panel, inventory }: { panel: Panel; inventory: Inventory }
         <p className="mt-2 whitespace-pre-wrap text-sm text-muted">{panel.fields.body}</p>
         <label className="mt-5 block">
           <span className="label">What it is</span>
-          <select className="control" value={kind} onChange={(event) => setKind(event.target.value)}>
+          <select
+            className="control"
+            value={kind}
+            onChange={(event) => setKind(event.target.value)}
+          >
             {kinds.map((item) => (
               <option key={item}>{item}</option>
             ))}
@@ -642,39 +822,94 @@ function EventQuote({ panel, inventory }: { panel: Panel; inventory: Inventory }
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label>
             <span className="label">Full name</span>
-            <input className="control" required minLength={2} maxLength={80} value={name} onChange={(event) => setName(event.target.value)} />
+            <input
+              className="control"
+              required
+              minLength={2}
+              maxLength={80}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
           </label>
           <label>
             <span className="label">Email</span>
-            <input className="control" type="email" required maxLength={120} value={email} onChange={(event) => setEmail(event.target.value)} />
+            <input
+              className="control"
+              type="email"
+              required
+              maxLength={120}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
           </label>
           <label>
             <span className="label">Phone</span>
-            <input className="control" type="tel" required minLength={7} maxLength={30} value={phone} onChange={(event) => setPhone(event.target.value)} />
+            <input
+              className="control"
+              type="tel"
+              required
+              minLength={7}
+              maxLength={30}
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+            />
           </label>
           <label>
             <span className="label">Headcount</span>
-            <input className="control" type="number" min={1} max={500} value={party} onChange={(event) => setParty(Number(event.target.value))} />
+            <input
+              className="control"
+              type="number"
+              min={1}
+              max={500}
+              value={party}
+              onChange={(event) => setParty(Number(event.target.value))}
+            />
           </label>
           <label>
             <span className="label">First day</span>
-            <input className="control" type="date" value={start} onChange={(event) => setStart(event.target.value)} />
+            <input
+              className="control"
+              type="date"
+              value={start}
+              onChange={(event) => setStart(event.target.value)}
+            />
           </label>
           <label>
             <span className="label">Last day</span>
-            <input className="control" type="date" value={end} onChange={(event) => setEnd(event.target.value)} />
+            <input
+              className="control"
+              type="date"
+              value={end}
+              onChange={(event) => setEnd(event.target.value)}
+            />
           </label>
         </div>
-        <p className="mt-2 text-sm text-muted">If you fill one date, fill both. The last day is the morning you are done, not an extra night.</p>
+        <p className="mt-2 text-sm text-muted">
+          If you fill one date, fill both. The last day is the morning you are done, not an extra
+          night.
+        </p>
         <label className="mt-4 block">
           <span className="label">What the day needs</span>
-          <textarea className="control" maxLength={600} value={note} onChange={(event) => setNote(event.target.value)} placeholder="Meals, lodging, a station, a return next year. Leave it blank if the category is enough." />
+          <textarea
+            className="control"
+            maxLength={600}
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            placeholder="Meals, lodging, a station, a return next year. Leave it blank if the category is enough."
+          />
         </label>
-        <button className="btn mt-6" type="submit" disabled={busy}>{busy ? "Sending…" : "Request a quote"}</button>
-        {error ? <p className="mt-4 text-accent" role="alert">{error}</p> : null}
+        <button className="btn mt-6" type="submit" disabled={busy}>
+          {busy ? "Sending…" : "Request a quote"}
+        </button>
+        {error ? (
+          <p className="mt-4 text-accent" role="alert">
+            {error}
+          </p>
+        ) : null}
         {code ? (
           <p className="mt-4 border border-accent p-4" role="status">
-            Quote <span className="font-display text-2xl">{code}</span> is on the ranch desk. We will answer at the email you gave.
+            Quote <span className="font-display text-2xl">{code}</span> is on the ranch desk. We
+            will answer at the email you gave.
           </p>
         ) : null}
       </form>
@@ -699,7 +934,9 @@ function VendorForm({ panel }: { panel: Panel }) {
   const [code, setCode] = useState("");
 
   function toggle(item: string) {
-    setAlso((current) => (current.includes(item) ? current.filter((entry) => entry !== item) : [...current, item]));
+    setAlso((current) =>
+      current.includes(item) ? current.filter((entry) => entry !== item) : [...current, item],
+    );
   }
 
   async function submit(event: FormEvent) {
@@ -721,7 +958,9 @@ function VendorForm({ panel }: { panel: Panel }) {
           website,
           instagram,
           primary,
-          also: also.filter((item): item is (typeof WORKS)[number] => (WORKS as readonly string[]).includes(item)),
+          also: also.filter((item): item is (typeof WORKS)[number] =>
+            (WORKS as readonly string[]).includes(item),
+          ),
           years,
           insured: insured === "yes",
         },
@@ -752,35 +991,88 @@ function VendorForm({ panel }: { panel: Panel }) {
       <p className="mt-2 whitespace-pre-wrap text-sm text-muted">{panel.fields.body}</p>
       <label className="mt-5 block">
         <span className="label">Business name</span>
-        <input className="control" value={businessName} onChange={(event) => setBusinessName(event.target.value)} required minLength={2} maxLength={120} />
+        <input
+          className="control"
+          value={businessName}
+          onChange={(event) => setBusinessName(event.target.value)}
+          required
+          minLength={2}
+          maxLength={120}
+        />
       </label>
       <label className="mt-4 block">
         <span className="label">Your full name</span>
-        <input className="control" value={contactName} onChange={(event) => setContactName(event.target.value)} required minLength={2} maxLength={120} />
+        <input
+          className="control"
+          value={contactName}
+          onChange={(event) => setContactName(event.target.value)}
+          required
+          minLength={2}
+          maxLength={120}
+        />
       </label>
       <label className="mt-4 block">
         <span className="label">Email</span>
-        <input className="control" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required maxLength={120} />
+        <input
+          className="control"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+          maxLength={120}
+        />
       </label>
       <label className="mt-4 block">
         <span className="label">Phone</span>
-        <input className="control" type="tel" value={phone} onChange={(event) => setPhone(event.target.value)} required minLength={7} maxLength={30} />
+        <input
+          className="control"
+          type="tel"
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
+          required
+          minLength={7}
+          maxLength={30}
+        />
       </label>
       <label className="mt-4 block">
         <span className="label">Area you are based in</span>
-        <input className="control" value={area} onChange={(event) => setArea(event.target.value)} required minLength={2} maxLength={80} placeholder="Austin, Del Valle, Central Texas" />
+        <input
+          className="control"
+          value={area}
+          onChange={(event) => setArea(event.target.value)}
+          required
+          minLength={2}
+          maxLength={80}
+          placeholder="Austin, Del Valle, Central Texas"
+        />
       </label>
       <label className="mt-4 block">
         <span className="label">Website</span>
-        <input className="control" value={website} onChange={(event) => setWebsite(event.target.value)} placeholder="https://" inputMode="url" />
+        <input
+          className="control"
+          value={website}
+          onChange={(event) => setWebsite(event.target.value)}
+          placeholder="https://"
+          inputMode="url"
+        />
       </label>
       <label className="mt-4 block">
         <span className="label">Instagram</span>
-        <input className="control" value={instagram} onChange={(event) => setInstagram(event.target.value)} placeholder="@studio" maxLength={120} />
+        <input
+          className="control"
+          value={instagram}
+          onChange={(event) => setInstagram(event.target.value)}
+          placeholder="@studio"
+          maxLength={120}
+        />
       </label>
       <label className="mt-4 block">
         <span className="label">Primary category</span>
-        <select className="control" value={primary} onChange={(event) => setPrimary(event.target.value as (typeof WORKS)[number])}>
+        <select
+          className="control"
+          value={primary}
+          onChange={(event) => setPrimary(event.target.value as (typeof WORKS)[number])}
+        >
           {WORKS.map((item) => (
             <option key={item}>{item}</option>
           ))}
@@ -792,7 +1084,13 @@ function VendorForm({ panel }: { panel: Panel }) {
           {WORKS.filter((item) => item !== primary).map((item) => {
             const on = also.includes(item);
             return (
-              <button key={item} type="button" aria-pressed={on} onClick={() => toggle(item)} className={on ? "btn" : "btn-line"}>
+              <button
+                key={item}
+                type="button"
+                aria-pressed={on}
+                onClick={() => toggle(item)}
+                className={on ? "btn" : "btn-line"}
+              >
                 {item}
               </button>
             );
@@ -801,21 +1099,41 @@ function VendorForm({ panel }: { panel: Panel }) {
       </fieldset>
       <label className="mt-4 block">
         <span className="label">Years in business</span>
-        <input className="control" type="number" min={0} max={80} required value={years} onChange={(event) => setYears(Number(event.target.value))} />
+        <input
+          className="control"
+          type="number"
+          min={0}
+          max={80}
+          required
+          value={years}
+          onChange={(event) => setYears(Number(event.target.value))}
+        />
       </label>
       <label className="mt-4 block">
         <span className="label">Liability insurance</span>
-        <select className="control" required value={insured} onChange={(event) => setInsured(event.target.value as "yes" | "no" | "")}>
+        <select
+          className="control"
+          required
+          value={insured}
+          onChange={(event) => setInsured(event.target.value as "yes" | "no" | "")}
+        >
           <option value="">Choose</option>
           <option value="yes">Yes, we carry it</option>
           <option value="no">Not yet</option>
         </select>
       </label>
-      <button className="btn mt-6" type="submit" disabled={busy}>{busy ? "Saving…" : "Submit the application"}</button>
-      {error ? <p className="mt-4 text-accent" role="alert">{error}</p> : null}
+      <button className="btn mt-6" type="submit" disabled={busy}>
+        {busy ? "Saving…" : "Submit the application"}
+      </button>
+      {error ? (
+        <p className="mt-4 text-accent" role="alert">
+          {error}
+        </p>
+      ) : null}
       {code ? (
         <p className="mt-4 border border-accent p-4" role="status">
-          Logged as <span className="font-display text-2xl">{code}</span>. The desk has the business, the name, and how to reach you.
+          Logged as <span className="font-display text-2xl">{code}</span>. The desk has the
+          business, the name, and how to reach you.
         </p>
       ) : null}
     </form>
