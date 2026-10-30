@@ -54,7 +54,7 @@ function HeroFrame({
   return (
     <div
       ref={frame}
-      className={`relative w-full overflow-hidden bg-black${trim ? " aspect-[1672/941] md:aspect-[1672/885]" : ""}`}
+      className={`relative w-full overflow-hidden bg-black${trim ? " aspect-[1672/941] md:aspect-[1672/828]" : ""}`}
       style={trim ? undefined : { aspectRatio: "1672 / 941" }}
     >
       <div ref={layer} className="absolute inset-0 will-change-transform">
