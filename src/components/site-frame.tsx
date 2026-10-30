@@ -12,15 +12,7 @@ const LINKS = [
 
 function Mark() {
   return (
-    <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
-      <path
-        d="M16 3 L27.5 9.5 V22.5 L16 29 L4.5 22.5 V9.5 Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
-      <circle cx="16" cy="16" r="1.7" fill="currentColor" />
-    </svg>
+    <img src="/favicon.svg" alt="" className="h-8 w-8" aria-hidden />
   );
 }
 
