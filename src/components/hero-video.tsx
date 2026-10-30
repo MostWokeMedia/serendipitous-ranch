@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 const ALT = "Serendipitous Ranch. A place to slow down and reconnect. Del Valle, Texas.";
 
 /** Shared full-bleed hero frame: edge-to-edge, overflow hidden, 0.4x scroll parallax; static under reduced motion. */
-function HeroFrame({ children }: { children: (still: boolean) => React.ReactNode }) {
+function HeroFrame({
+  children,
+  trim = false,
+}: {
+  children: (still: boolean) => React.ReactNode;
+  trim?: boolean;
+}) {
   const frame = useRef<HTMLDivElement>(null);
   const layer = useRef<HTMLDivElement>(null);
   const [still, setStill] = useState(false);
@@ -48,8 +54,8 @@ function HeroFrame({ children }: { children: (still: boolean) => React.ReactNode
   return (
     <div
       ref={frame}
-      className="relative w-full overflow-hidden bg-black"
-      style={{ aspectRatio: "1672 / 941" }}
+      className={`relative w-full overflow-hidden bg-black${trim ? " aspect-[1672/941] md:aspect-[1672/828]" : ""}`}
+      style={trim ? undefined : { aspectRatio: "1672 / 941" }}
     >
       <div ref={layer} className="absolute inset-0 will-change-transform">
         {children(still)}
@@ -61,7 +67,7 @@ function HeroFrame({ children }: { children: (still: boolean) => React.ReactNode
 /** Homepage hero: looping drone video with logo/text baked in. */
 export function HeroVideo() {
   return (
-    <HeroFrame>
+    <HeroFrame trim>
       {(still) =>
         still ? (
           <img
