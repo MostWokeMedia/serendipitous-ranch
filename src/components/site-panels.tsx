@@ -146,12 +146,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
     case "home-rooms":
       return (
         <section className="wrap pb-8">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="max-w-xl text-4xl">{fields.title}</h2>
-            <Link to="/grounds" className="btn-line">
-              Walk the grounds
-            </Link>
-          </div>
+          <h2 className="mb-6 max-w-xl text-4xl">{fields.title}</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {fields.items.map((item, index) => (
               <figure key={item.title} className="panel overflow-hidden">
@@ -176,6 +171,9 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
             <h2 className="mt-3 text-4xl">{fields.title}</h2>
             <p className="mt-4 whitespace-pre-wrap text-muted">{fields.body}</p>
+            <Link to="/grounds" className="btn-line mt-6 inline-block">
+              Walk the grounds
+            </Link>
           </div>
           <StatList items={fields.items} />
         </section>
