@@ -122,6 +122,9 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
         <section className="wrap py-20">
           {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
           <h2 className="mt-3 max-w-2xl text-4xl sm:text-5xl">{fields.title}</h2>
+          {fields.note ? (
+            <p className="mt-4 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p>
+          ) : null}
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {fields.items.map((item, index) => (
               <Link key={item.title} to="/stay" className="panel block overflow-hidden">
@@ -138,9 +141,6 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
               </Link>
             ))}
           </div>
-          {fields.note ? (
-            <p className="mt-6 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p>
-          ) : null}
         </section>
       );
     case "home-rooms":
