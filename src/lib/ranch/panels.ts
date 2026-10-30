@@ -478,8 +478,17 @@ export function isPageId(value: string): value is PageId {
   return PAGES.some((page) => page.id === value);
 }
 
+/** A card saved with an empty title is unpublished: the ranch desk keeps its slot, the public page skips it. */
+function withoutBlankItems(panel: Panel): Panel {
+  const items = panel.fields.items.filter((item) => item.title.trim() !== "");
+  return items.length === panel.fields.items.length ? panel : { ...panel, fields: { ...panel.fields, items } };
+}
+
 export function panelsOn(panels: Panel[], page: PageId): Panel[] {
-  return panels.filter((panel) => panel.page === page && !panel.hidden).sort((a, b) => a.sort - b.sort || a.label.localeCompare(b.label));
+  return panels
+    .filter((panel) => panel.page === page && !panel.hidden)
+    .map(withoutBlankItems)
+    .sort((a, b) => a.sort - b.sort || a.label.localeCompare(b.label));
 }
 
 export function panelById(panels: Panel[], id: string): Panel {
