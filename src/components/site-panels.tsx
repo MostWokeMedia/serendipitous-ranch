@@ -93,7 +93,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             <Link to="/stay" className="btn">
               See the calendars
             </Link>
-            <Link to="/corporate" className="btn-line">
+            <Link to="/events" className="btn-line">
               Request a quote
             </Link>
           </div>
@@ -196,7 +196,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
           <h2 className="mt-3 max-w-2xl text-4xl">{fields.title}</h2>
           <CardGrid items={fields.items} panel />
-          <Link to="/corporate" className="btn mt-8">
+          <Link to="/events" className="btn mt-8">
             Request a quote
           </Link>
         </section>
@@ -321,7 +321,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             {fields.note ? (
               <p className="mt-6 max-w-3xl whitespace-pre-wrap text-muted">{fields.note}</p>
             ) : null}
-            <Link to="/corporate" className="btn mt-8">
+            <Link to="/events" className="btn mt-8">
               Request a quote
             </Link>
           </div>

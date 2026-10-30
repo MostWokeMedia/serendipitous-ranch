@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CorporateRouteImport } from './routes/corporate'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as GroundsRouteImport } from './routes/grounds'
 import { Route as StayRouteImport } from './routes/stay'
 import { Route as StewardRouteImport } from './routes/steward'
@@ -22,9 +22,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CorporateRoute = CorporateRouteImport.update({
-  id: '/corporate',
-  path: '/corporate',
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GroundsRoute = GroundsRouteImport.update({
@@ -55,7 +55,7 @@ const ApiIcalSlugRoute = ApiIcalSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/corporate': typeof CorporateRoute
+  '/events': typeof EventsRoute
   '/grounds': typeof GroundsRoute
   '/stay': typeof StayRoute
   '/steward': typeof StewardRoute
@@ -64,7 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/corporate': typeof CorporateRoute
+  '/events': typeof EventsRoute
   '/grounds': typeof GroundsRoute
   '/stay': typeof StayRoute
   '/steward': typeof StewardRoute
@@ -74,7 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/corporate': typeof CorporateRoute
+  '/events': typeof EventsRoute
   '/grounds': typeof GroundsRoute
   '/stay': typeof StayRoute
   '/steward': typeof StewardRoute
@@ -85,7 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/corporate'
+    | '/events'
     | '/grounds'
     | '/stay'
     | '/steward'
@@ -94,7 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/corporate'
+    | '/events'
     | '/grounds'
     | '/stay'
     | '/steward'
@@ -103,7 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/corporate'
+    | '/events'
     | '/grounds'
     | '/stay'
     | '/steward'
@@ -113,7 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CorporateRoute: typeof CorporateRoute
+  EventsRoute: typeof EventsRoute
   GroundsRoute: typeof GroundsRoute
   StayRoute: typeof StayRoute
   StewardRoute: typeof StewardRoute
@@ -130,11 +130,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/corporate': {
-      id: '/corporate'
-      path: '/corporate'
-      fullPath: '/corporate'
-      preLoaderRoute: typeof CorporateRouteImport
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/grounds': {
@@ -177,7 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CorporateRoute: CorporateRoute,
+  EventsRoute: EventsRoute,
   GroundsRoute: GroundsRoute,
   StayRoute: StayRoute,
   StewardRoute: StewardRoute,

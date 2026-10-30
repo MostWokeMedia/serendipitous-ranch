@@ -6,7 +6,7 @@ import { ADDRESS, DRIVES, MAPS } from "@/lib/ranch/content";
 const LINKS = [
   { to: "/stay", label: "Stay" },
   { to: "/grounds", label: "Grounds" },
-  { to: "/corporate", label: "Events" },
+  { to: "/events", label: "Events" },
   { to: "/vendors", label: "Vendors" },
 ] as const;
 
@@ -69,7 +69,7 @@ export function SiteFrame({
                 {l.label}
               </Link>
             ))}
-            <Link to="/corporate" className="btn ml-2">
+            <Link to="/events" className="btn ml-2">
               Request a quote
             </Link>
           </nav>
@@ -91,7 +91,7 @@ export function SiteFrame({
                   {l.label}
                 </Link>
               ))}
-              <Link to="/corporate" className="btn my-3">
+              <Link to="/events" className="btn my-3">
                 Request a quote
               </Link>
             </div>

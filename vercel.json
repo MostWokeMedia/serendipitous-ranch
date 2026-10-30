@@ -1,3 +1,7 @@
 {
-  "installCommand": "npm install --omit=dev --no-audit --no-fund"
+  "installCommand": "npm install --omit=dev --no-audit --no-fund",
+  "redirects": [
+    { "source": "/corporate", "destination": "/events", "permanent": true },
+    { "source": "/corporate/:path*", "destination": "/events/:path*", "permanent": true }
+  ]
 }

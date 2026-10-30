@@ -3,7 +3,7 @@ import { driveItems, PageStack } from "@/components/site-panels";
 import { SiteFrame } from "@/components/site-frame";
 import { getInventory } from "@/lib/ranch/api";
 
-export const Route = createFileRoute("/corporate")({
+export const Route = createFileRoute("/events")({
   loader: () => getInventory(),
   head: () => ({
     meta: [
@@ -14,10 +14,10 @@ export const Route = createFileRoute("/corporate")({
       },
     ],
   }),
-  component: CorporatePage,
+  component: EventsPage,
 });
 
-function CorporatePage() {
+function EventsPage() {
   const data = Route.useLoaderData();
   return (
     <SiteFrame drives={driveItems(data)}>
