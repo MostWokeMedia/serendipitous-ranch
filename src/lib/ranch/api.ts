@@ -696,6 +696,38 @@ export const dismissVendor = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+function escapeHtml(text: string): string {
+  return text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+}
+
+// Emails a form submission to FORM_NOTIFY_TO via Resend. Never throws; never logs the recipient.
+async function notifyForm(subject: string, replyTo: string, fields: [string, string][]): Promise<void> {
+  const key = process.env.RESEND_API_KEY;
+  const to = (process.env.FORM_NOTIFY_TO ?? "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  if (!key || !to.length) {
+    console.error("[notify] form email skipped: email settings missing");
+    return;
+  }
+  const from = process.env.FORM_NOTIFY_FROM || "Serendipitous Ranch <onboarding@resend.dev>";
+  const text = fields.map(([label, value]) => `${label}: ${value}`).join("\n");
+  const html = `<h2>${escapeHtml(subject)}</h2><table>${fields
+    .map(([label, value]) => `<tr><td><b>${escapeHtml(label)}</b></td><td>${escapeHtml(value)}</td></tr>`)
+    .join("")}</table>`;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from, to, reply_to: replyTo, subject, text, html }),
+    });
+    if (!res.ok) console.error(`[notify] form email failed: HTTP ${res.status}`);
+  } catch {
+    console.error("[notify] form email failed: network error");
+  }
+}
+
 export const submitVendor = createServerFn({ method: "POST" })
   .validator((input: unknown) => vendorSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: true; refCode: string } | Fail> => {
@@ -738,6 +770,19 @@ export const submitVendor = createServerFn({ method: "POST" })
         data.years,
       ],
     );
+    await notifyForm(`New vendor application: ${data.businessName}`, data.email.trim(), [
+      ["Reference", code],
+      ["Business", data.businessName],
+      ["Contact", data.contactName],
+      ["Email", data.email.trim()],
+      ["Phone", data.phone.trim()],
+      ["Area", data.area],
+      ["Website", site ?? ""],
+      ["Instagram", instagram],
+      ["Works", works.join(", ")],
+      ["Years in business", String(data.years)],
+      ["Insured", data.insured ? "Yes" : "No"],
+    ]);
     return { ok: true, refCode: code };
   });
 
@@ -777,6 +822,20 @@ export const submitInquiry = createServerFn({ method: "POST" })
         end ?? "",
         data.partySize,
         data.note,
+      ],
+    );
+    await notifyForm(
+      `${data.kind === "stay" ? "New stay quote request" : "New event request"}: ${data.contactName}`,
+      data.email.trim(),
+      [
+        ["Reference", code],
+        [data.kind === "stay" ? "Stay" : "Event type", data.subject],
+        ["Name", data.contactName],
+        ["Email", data.email.trim()],
+        ["Phone", data.phone.trim()],
+        ["Dates", start && end ? `${start} to ${end}` : "Not given"],
+        ["People", String(data.partySize)],
+        ["Note", data.note],
       ],
     );
     return { ok: true, refCode: code };
