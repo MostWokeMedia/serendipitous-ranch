@@ -106,6 +106,7 @@ export function HeroImage({
   stats,
   overlay,
   className,
+  trim,
 }: {
   src: string;
   webp?: string;
@@ -115,13 +116,15 @@ export function HeroImage({
   overlay?: React.ReactNode;
   /** Extra classes on the outer wrapper (e.g. a narrower desktop width). */
   className?: string;
+  /** Desktop-only 12% top trim, image anchored to the bottom. */
+  trim?: boolean;
 }) {
   const frame = (
-    <HeroFrame>
+    <HeroFrame trim={trim}>
       {() => (
         <picture>
           {webp ? <source srcSet={webp} type="image/webp" /> : null}
-          <img src={src} alt={alt} className="h-full w-full object-cover" fetchPriority="high" />
+          <img src={src} alt={alt} className={`h-full w-full object-cover${trim ? " md:object-bottom" : ""}`} fetchPriority="high" />
         </picture>
       )}
     </HeroFrame>

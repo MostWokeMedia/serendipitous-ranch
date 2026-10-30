@@ -371,6 +371,7 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
             alt="Campfire at dusk by the covered pavilion and geodesic dome"
             overlay={<EventsLogo />}
             className="md:mx-auto md:mt-6 md:w-[90%]"
+          trim
           />
           <section className="wrap py-12">
             {fields.kicker ? <p className="kicker">{fields.kicker}</p> : null}
