@@ -42,6 +42,35 @@ function photoFor(title: string): { src: string; alt: string } | undefined {
   return PHOTOS[title.trim()];
 }
 
+function isAdobeTemple(title: string): boolean {
+  return title.trim().toLowerCase() === "adobe temple";
+}
+
+/** Panel photo with an "Under construction" tag on the Adobe Temple image only. */
+function PanelPhoto({
+  title,
+  src,
+  alt,
+  className,
+}: {
+  title: string;
+  src: string | undefined;
+  alt: string;
+  className?: string;
+}) {
+  if (!isAdobeTemple(title)) {
+    return <img src={src} alt={alt} className={className} />;
+  }
+  return (
+    <div className={`relative ${className ?? ""}`}>
+      <img src={src} alt={alt} className="size-full object-cover" />
+      <span className="pointer-events-none absolute top-3 left-3 z-10 rounded-full bg-bg/80 px-2.5 py-1 text-[0.68rem] tracking-[0.16em] text-fg uppercase">
+        Under construction
+      </span>
+    </div>
+  );
+}
+
 type Pick = { slug: string; start: string | null; end: string | null };
 
 const StayPickContext = createContext<{ pick: Pick; setPick: (pick: Pick) => void } | null>(null);
@@ -128,7 +157,8 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {fields.items.map((item, index) => (
               <Link key={item.title} to="/stay" className="panel block overflow-hidden">
-                <img
+                <PanelPhoto
+                  title={item.title}
                   src={photoFor(item.title)?.src}
                   alt={photoFor(item.title)?.alt ?? ""}
                   className="aspect-3/2 w-full object-cover"
@@ -150,7 +180,8 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
           <div className="grid gap-4 md:grid-cols-2">
             {fields.items.map((item, index) => (
               <figure key={item.title} className="panel overflow-hidden">
-                <img
+                <PanelPhoto
+                  title={item.title}
                   src={photoFor(item.title)?.src}
                   alt={photoFor(item.title)?.alt ?? ""}
                   className="aspect-3/2 w-full object-cover"
@@ -243,7 +274,8 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
                   className={`panel grid gap-0 overflow-hidden ${photo ? "md:grid-cols-2" : ""}`}
                 >
                   {photo ? (
-                    <img
+                    <PanelPhoto
+                      title={item.title}
                       src={photo.src}
                       alt={photo.alt}
                       className={`h-full min-h-64 w-full object-cover ${index % 2 ? "md:order-2" : ""}`}
@@ -264,7 +296,8 @@ function PanelSwitch({ panel, inventory }: { panel: Panel; inventory: Inventory 
               return (
                 <article key={item.title} className="panel overflow-hidden">
                   {photo ? (
-                    <img
+                    <PanelPhoto
+                      title={item.title}
                       src={photo.src}
                       alt={photo.alt}
                       className="aspect-3/2 w-full object-cover"
